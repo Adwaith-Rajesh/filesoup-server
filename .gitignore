@@ -2,6 +2,7 @@
 .vscode
 
 # python stuff
+__pycache__
 .Python
 build/
 develop-eggs/
@@ -23,3 +24,7 @@ MANIFEST
 
 # filesoup-server
 fs_venv
+
+# filesoup-server stuff
+test.py
+file-index.json
