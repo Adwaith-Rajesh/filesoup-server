@@ -1,6 +1,5 @@
 from configparser import ConfigParser
 from pathlib import Path
-from pprint import pprint
 import json
 import uuid
 import mimetypes
@@ -50,14 +49,15 @@ def prepare_index_data(indexed_files: List[str]) -> FileIndexData:
         if not _type in temp_index:
             temp_index[_type] = {}
             
-        temp_index[_type][file_data_id]= file_data
+        temp_index[_type][file_data_id] = file_data
 
     return temp_index
 
 
 def get_files(dirs: List[str]) -> List[str]:
-    indexed_files = []
     """Gets all the files from the given dirs and indexes them"""
+
+    indexed_files = []
     print()
     print(f"{Fore.GREEN}Indexing Files...")
 
@@ -74,7 +74,7 @@ def get_files(dirs: List[str]) -> List[str]:
     return indexed_files
 
 
-def index_files(force_index: bool=False):
+def index_files(force_index: bool=False) -> bool:
     """indexes all the files from the given directories."""
     if not Path("./file-index.json").is_file() or force_index:  # checks whether an index already exists or not
         config = ConfigParser()
@@ -89,11 +89,13 @@ def index_files(force_index: bool=False):
 
             # indexes all the files and categorises them
             index_data = prepare_index_data(files)
-            pprint(index_data)
 
             # make the index file
             make_json_file(index_data)
 
         except KeyError:
             print(f"{Fore.RED}Important keys are missing !!")
+            
+            return False
         # print(config.sections())
+    return True
