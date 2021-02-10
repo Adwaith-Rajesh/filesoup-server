@@ -34,7 +34,7 @@ def prepare_index_data(indexed_files: List[str]) -> FileIndexData:
 
         file_data = {
             "name": filename,
-            "path": filename_with_path
+            "path": os.path.dirname(filename_with_path)
         }
 
         def gen_id():

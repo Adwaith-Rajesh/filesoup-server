@@ -27,4 +27,6 @@ fs_venv
 
 # filesoup-server stuff
 test.py
+test_request.py
 file-index.json
+return_data.*
