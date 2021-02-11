@@ -30,3 +30,4 @@ test.py
 test_request.py
 file-index.json
 return_data.*
+*.mp4
