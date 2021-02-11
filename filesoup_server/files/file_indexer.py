@@ -24,6 +24,7 @@ def make_json_file(data: FileIndexData):
     with open("./file-index.json", "w") as index_file:
         json.dump(data, index_file)
 
+
 def prepare_index_data(indexed_files: List[str]) -> FileIndexData:
     print("\033[39m")
     """This will prepare the file-index.json file"""
@@ -32,10 +33,7 @@ def prepare_index_data(indexed_files: List[str]) -> FileIndexData:
         filename = os.path.basename(filename_with_path)
         _type = mimetypes.guess_type(filename_with_path)[0].split("/")[0]
 
-        file_data = {
-            "name": filename,
-            "path": os.path.dirname(filename_with_path)
-        }
+        file_data = {"name": filename, "path": os.path.dirname(filename_with_path)}
 
         def gen_id():
             nonlocal temp_index
@@ -48,7 +46,7 @@ def prepare_index_data(indexed_files: List[str]) -> FileIndexData:
 
         if not _type in temp_index:
             temp_index[_type] = {}
-            
+
         temp_index[_type][file_data_id] = file_data
 
     return temp_index
@@ -74,9 +72,11 @@ def get_files(dirs: List[str]) -> List[str]:
     return indexed_files
 
 
-def index_files(force_index: bool=False) -> bool:
+def index_files(force_index: bool = False) -> bool:
     """indexes all the files from the given directories."""
-    if not Path("./file-index.json").is_file() or force_index:  # checks whether an index already exists or not
+    if (
+        not Path("./file-index.json").is_file() or force_index
+    ):  # checks whether an index already exists or not
         config = ConfigParser()
         config.read("./fs_config.cfg")
 
@@ -95,7 +95,7 @@ def index_files(force_index: bool=False) -> bool:
 
         except KeyError:
             print(f"{Fore.RED}Important keys are missing !!")
-            
+
             return False
         # print(config.sections())
     return True
