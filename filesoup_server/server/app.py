@@ -1,11 +1,12 @@
 import os
-from requests.api import post
 
 import werkzeug
 from flask import Flask, send_file, send_from_directory, abort
 from flask_restful import Resource, Api, reqparse
 
 from filesoup_server.files.file_manager import check_file_exists
+from filesoup_server.files.file_manager import delete_file
+from filesoup_server.files.file_indexer import update_index
 from .server_utils import ServerData
 from .server_utils import verify_user
 from .server_utils import load_index
@@ -39,7 +40,7 @@ post_parser.add_argument(
     "file",
     type=werkzeug.datastructures.FileStorage,
     required=True,
-    help="The type of the file to be written is requires...",
+    help="The type of the file to be written is required...",
     location="files",
 )
 
@@ -85,13 +86,25 @@ class Files(Resource):
                 data=file_index_data, _type=_type, _id=_id
             )
             if cv:
-                # TODO: remove the id from the index data, delete the file from the file system
-                pass
+                
+                # update the index file
+                update_index(file_index_data)
+
+                # delete the file from the file system
+                path = file_index_data[_type][_id]["path"]
+                name = file_index_data[_type][_id]["name"]
+                delete_file(os.path.join(path, name))
+
+                # remvoe the file from the current index
+                del file_index_data[_type][_id]
+
             elif cv == 2:
-                pass
+                abort(404, description="The file type does not exists in the server..")
 
             elif cv == 3:
-                pass
+                abort(404, description="No file exists with this id...")
+
+        return in_delete()
 
     def post(self, _type: str, _id: str):
         auth = auth_parser.parse_args()

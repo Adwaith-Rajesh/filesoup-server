@@ -99,3 +99,9 @@ def index_files(force_index: bool = False) -> bool:
             return False
         # print(config.sections())
     return True
+
+
+def update_index(data: FileIndexData) -> None:
+    """Updates the index file with the runtime index data"""
+    with open("./file-index.json", "w") as index_file:
+        json.dump(data, index_file)
