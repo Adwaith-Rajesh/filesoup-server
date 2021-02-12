@@ -82,21 +82,23 @@ class Files(Resource):
     def delete(self, _type: str, _id: str):
         @dec_verify_user(auth_parser.parse_args())
         def in_delete():
+            global file_index_data
             cv = check_file_exists_on_index_data(
                 data=file_index_data, _type=_type, _id=_id
             )
             if cv:
                 
-                # update the index file
-                update_index(file_index_data)
-
                 # delete the file from the file system
                 path = file_index_data[_type][_id]["path"]
                 name = file_index_data[_type][_id]["name"]
                 delete_file(os.path.join(path, name))
 
-                # remvoe the file from the current index
+                # remove the file from the current index
                 del file_index_data[_type][_id]
+
+                # update the index file
+                update_index(file_index_data)
+
 
             elif cv == 2:
                 abort(404, description="The file type does not exists in the server..")
@@ -107,10 +109,14 @@ class Files(Resource):
         return in_delete()
 
     def post(self, _type: str, _id: str):
-        auth = auth_parser.parse_args()
-        post_args = post_parser.parse_args()
-        _file = post_args["file"]
-        _file.save("return_data.mp4")
+
+        @dec_verify_user(auth_parser.parse_args())
+        def in_post():
+            post_args = post_parser.parse_args()
+            _file = post_args["file"]
+            path = post_args["path"]
+            print("file", _file.filename)
+            # _file.save()
 
 
 api.add_resource(Indexdata, "/indexdata")
