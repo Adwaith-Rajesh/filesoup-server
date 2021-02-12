@@ -26,6 +26,7 @@ MANIFEST
 fs_venv
 
 # filesoup-server stuff
+run_test.bat
 test.py
 test_request.py
 file-index.json

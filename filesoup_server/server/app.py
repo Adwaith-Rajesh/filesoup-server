@@ -43,6 +43,12 @@ post_parser.add_argument(
     help="The type of the file to be written is required...",
     location="files",
 )
+post_parser.add_argument(
+    "path",
+    type=str,
+    required=True,
+    help="The path to save the file to is needed.",
+)
 
 
 class Indexdata(Resource):
@@ -87,7 +93,7 @@ class Files(Resource):
                 data=file_index_data, _type=_type, _id=_id
             )
             if cv:
-                
+
                 # delete the file from the file system
                 path = file_index_data[_type][_id]["path"]
                 name = file_index_data[_type][_id]["name"]
@@ -99,7 +105,6 @@ class Files(Resource):
                 # update the index file
                 update_index(file_index_data)
 
-
             elif cv == 2:
                 abort(404, description="The file type does not exists in the server..")
 
@@ -109,14 +114,14 @@ class Files(Resource):
         return in_delete()
 
     def post(self, _type: str, _id: str):
-
         @dec_verify_user(auth_parser.parse_args())
         def in_post():
             post_args = post_parser.parse_args()
             _file = post_args["file"]
             path = post_args["path"]
-            print("file", _file.filename)
-            # _file.save()
+            _file.save(os.path.join(path, _file.filename))
+
+        return in_post()
 
 
 api.add_resource(Indexdata, "/indexdata")
